@@ -49,3 +49,12 @@ old()ヘルパーの引数にフォームのname属性の値を指定するこ�
 例：<input type="text" id="title" name="title" value="{{ old('title') }}">
 ・テスト
 POSTリクエストを送信するpost()メソッドでは、第2引数に連想配列を指定することでデータを送信できる
+
+・コントローラ
+Authファサードのid()メソッドを使うことで、現在ログイン中のユーザーのID（idカラムの値）を直接取得できる
+updateアクションでは受け取ったPostモデルのインスタンスを更新するため、storeアクションのように$post = new Post();でインスタンス化する必要はない
+・ビュー
+old()ヘルパ関数に第2引数を渡すことで、直前の入力値が存在しない場合はNULLの代わりに第2引数の値を返してくれる
+例：<input type="text" id="title" name="title" value="{{ old('title', $post->title) }}">
+・テスト
+PATCHリクエストを送信するpatch()メソッドでは、第2引数に連想配列を指定することでデータを送信できる
