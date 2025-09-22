@@ -27,8 +27,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
+        
+        
+        // ここで修正をする。routeメソッドの部分でweb.phpで発生させるコントローラーのアクションを選択をする
+        return redirect()->intended(route('posts.index'));
     }
 
     /**
