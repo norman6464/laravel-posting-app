@@ -68,4 +68,15 @@ class PostController extends Controller
         return redirect()->route('posts.show', $post)->with('flash_message', '投稿を編集しました。');
     }
     
+    // 削除機能
+    public function destroy(Post $post) {
+        if($post->user_id !== Auth::id()) {
+            return redirect()->route('posts.index')->with('errorMessage', '不正なアクセスです。');
+        }
+        
+        $post->delete();
+        
+        return redirect()->route('posts.index')->with('flush_message', '投稿を削除しました。');
+    }
+    
 }

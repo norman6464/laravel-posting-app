@@ -13,7 +13,7 @@ config/app.phpファイルを編集をしたら、次にresourcesフォルダの
 Laravelでメール認証機能を実装するにはMustVerifyEmailインターフェースをつくる
 UserモデルクラスにimplementsするだけであとはLaravel側が実装をしてくれる
 
-テーブルの作成手順
+・テーブルの作成手順
 マイグレーションファイルを準備する
 php artisan make:migration マイグレーションファイル名 --create=作成するテーブル名
 マイグレーションファイルを編集し、カラムを追加する
@@ -58,3 +58,13 @@ old()ヘルパ関数に第2引数を渡すことで、直前の入力値が存�
 例：<input type="text" id="title" name="title" value="{{ old('title', $post->title) }}">
 ・テスト
 PATCHリクエストを送信するpatch()メソッドでは、第2引数に連想配列を指定することでデータを送信できる
+
+・コントローラ
+アクション内でデータを削除するには、受け取ったモデルのインスタンスに対してdelete()メソッドを実行するだけでよい
+例：public function destroy(Post $post) { $post->delete(); }
+・ビュー
+フォームの送信時に確認ダイアログを表示させることで、誤って「削除」ボタンを押してしまうといった意図せぬ操作を防げる
+form要素にonsubmit属性を設定し、JavaScriptのconfirm()メソッドを使うことで、フォームの送信時に確認ダイアログを表示させられる
+例：<form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="return confirm('本当に削除してもよろしいですか？');">
+・ルーティング
+Route::resource('基準となるURL', コントローラ名::class);と記述することで、各アクションのルーティングを自動で一括設定できる
