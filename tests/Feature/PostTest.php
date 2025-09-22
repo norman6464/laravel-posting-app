@@ -54,4 +54,54 @@ class PostTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($post->title);
     }
+    
+    // 未ログインの場合はユーザーは新規投稿ページにアクセスできない
+    public function test_guest_cannot_access_posts_create() {
+        $response = $this->get(route('posts.create'));
+        
+        $response->assertRedirect(route('login'));
+    }
+    
+    // ログイン済みのユーザーは新規投稿ページにアクセスできる
+    public function test_user_can_access_posts_create() {
+        $user = User::factory()->create();
+        
+        // acting（代理）でログインするユーザーを決めるメソッド
+        $response = $this->actingAs($user)->get(route('posts.create'));
+        
+        $response->assertStatus(200);
+    }
+    
+    // 未ログインのユーザーは投稿を作成できない
+    public function test_guest_cannot_access_posts_store() {
+        $post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始',
+        ];
+        
+        $response = $this->post(route('posts.store', $post));
+        // 未ログインなのでpostsテーブルに反映されていないか（ログインしないと作成できない）
+        $this->assertDatabaseMissing('posts', $post);
+        
+        $response->assertRedirect(route('login'));
+        
+    }
+    
+    // ログイン済みのユーザーは投稿を作成できる
+    public function test_user_can_access_posts_store() {
+        $user = User::factory()->create();
+        
+        $post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始',
+        ];
+        
+        $response = $this->actingAs($user)->post(route('posts.store', $post));
+        
+        // $postの値がpostsテーブルに存在するかを確かめる（ログインしているので作成できているはず）
+        $this->assertDatabaseHas('posts', $post);
+        
+        $response->assertRedirect(route('posts.index'));
+    }
+    
 }

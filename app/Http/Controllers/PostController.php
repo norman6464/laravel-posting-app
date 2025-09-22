@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,5 +28,21 @@ class PostController extends Controller
         */
         return view('posts.show', compact('post'));
     }
+    
+    public function create() {
+        return view('posts.create');
+    }
+    
+    // 作成機能
+    public function store(PostRequest $request) { // 引数はフォームリクエストで自動でバリデーションをさせる
+        // 最初は必ずインスタンス化
+        $post = new Post();
+        $post->title = $request->input('title'); // リクエストパラメータを取得する（name属性の値title）
+        $post->content = $request->input('content');
+        $post->user_id = Auth::id(); // 現在ログインしているユーザーのID
+        $post->save(); // 最後は必ず保存
+        
+        return redirect()->route('posts.index')->with('flash_message', '投稿が完了しました。'); // withメソッドでflashメッセージを生成する
+    } 
     
 }
